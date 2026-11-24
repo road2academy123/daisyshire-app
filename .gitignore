@@ -1,0 +1,28 @@
+node_modules/
+dist/
+
+.env
+.env.*
+!.env.example
+
+.DS_Store
+.idea/
+.vscode/
+
+android/.gradle/
+android/local.properties
+android/**/build/
+
+*.jks
+*.keystore
+
+# Old development backups and temporary files
+backups/
+*.bak
+*.before-*
+*.backup*
+*.stage*-backup
+*.tmp.js
+
+# Accidental terminal output file
+No environment files staged.
