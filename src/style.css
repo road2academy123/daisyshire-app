@@ -6019,3 +6019,1899 @@ button:active,
   opacity: 1 !important;
 }
 
+
+/* DAISYSHIRE — MULTI CHAT PANEL */
+.daisy-chats-panel {
+  margin: 12px 14px;
+  padding: 16px;
+  background: #fffafd;
+  border: 1px solid #f2dce9;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(174, 111, 151, 0.10);
+}
+
+.daisy-chats-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.daisy-chats-heading h3 {
+  margin: 0;
+  color: #75445f;
+  font-size: 17px;
+}
+
+.daisy-chats-heading button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: #f9e8f1;
+  color: #925875;
+  font-size: 22px;
+}
+
+.daisy-user-search {
+  display: flex;
+  gap: 8px;
+}
+
+.daisy-user-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #efd5e4;
+  border-radius: 13px;
+  background: white;
+  color: #55394a;
+  outline: none;
+}
+
+.daisy-user-search input:focus {
+  border-color: #d58ab2;
+  box-shadow: 0 0 0 3px rgba(213, 138, 178, 0.12);
+}
+
+.daisy-user-search button {
+  padding: 0 17px;
+  border: 0;
+  border-radius: 13px;
+  background: #d98db5;
+  color: white;
+  font-weight: 600;
+}
+
+.daisy-user-search-results,
+.daisy-conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.daisy-user-search-results:empty {
+  display: none;
+}
+
+.daisy-chats-panel[hidden] {
+  display: none !important;
+}
+
+
+/* =====================================
+   DAISYSHIRE — FULL CHATS PAGE
+===================================== */
+
+.daisy-chats-screen {
+  width: min(100%, 680px);
+  margin: 20px auto;
+  padding: 22px;
+  background: #fffafd;
+  border: 1px solid #f2dce9;
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(174, 111, 151, 0.10);
+}
+
+.daisy-chats-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.daisy-chats-page-header h1 {
+  margin: 0;
+  color: #75445f;
+  font-size: 27px;
+  font-weight: 750;
+}
+
+.daisy-chats-page-header p {
+  margin: 6px 0 0;
+  color: #a17b91;
+  font-size: 13px;
+}
+
+.daisy-conversations-title {
+  margin: 26px 0 13px;
+  color: #75445f;
+  font-size: 17px;
+}
+
+.daisy-conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.daisy-conversation-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  gap: 12px;
+  padding: 13px;
+  text-align: left;
+  border: 1px solid #f4e2ec;
+  border-radius: 17px;
+  background: #ffffff;
+  color: #65445a;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.daisy-conversation-item:hover {
+  background: #fff4f9;
+  border-color: #e8bdd3;
+}
+
+.daisy-conversation-avatar {
+  width: 49px;
+  height: 49px;
+  flex: 0 0 49px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f9e8f1;
+}
+
+.daisy-conversation-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
+}
+
+.daisy-conversation-details strong {
+  overflow: hidden;
+  color: #75445f;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.daisy-conversation-details span {
+  overflow: hidden;
+  color: #a17b91;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.daisy-conversation-time {
+  flex-shrink: 0;
+  color: #b18ba1;
+  font-size: 11px;
+}
+
+.daisy-user-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #f1dce8;
+  border-radius: 15px;
+  background: #ffffff;
+}
+
+.daisy-user-result-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
+}
+
+.daisy-user-result-details strong {
+  color: #75445f;
+  font-size: 14px;
+}
+
+.daisy-user-result-details span {
+  color: #a17b91;
+  font-size: 12px;
+}
+
+.daisy-message-user-button {
+  flex-shrink: 0;
+  padding: 9px 15px;
+  border: 0;
+  border-radius: 12px;
+  background: #d98db5;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.daisy-message-user-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (max-width: 600px) {
+  .daisy-chats-screen {
+    margin: 0 auto;
+    padding: 17px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    min-height: 100%;
+  }
+
+  .daisy-chats-page-header h1 {
+    font-size: 24px;
+  }
+
+  .daisy-conversation-item {
+    padding: 11px;
+  }
+}
+
+
+/* FIX: CONVERSATION AVATAR IMAGE */
+.daisy-conversation-avatar {
+  width: 49px !important;
+  height: 49px !important;
+  min-width: 49px;
+  min-height: 49px;
+  flex: 0 0 49px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.daisy-conversation-avatar img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+
+/* Daisyshire: smoother messaging and reply interactions */
+.message-row:not(.daisy-message-enter) {
+  animation: none !important;
+}
+
+.message-row.daisy-message-enter {
+  animation: daisySmoothMessageEnter .30s cubic-bezier(.16, 1, .3, 1) both !important;
+}
+
+@keyframes daisySmoothMessageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.message-row.daisy-reply-triggered .message-bubble {
+  animation: daisyReplyNudge .28s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes daisyReplyNudge {
+  0% { transform: translateX(0) scale(1); }
+  45% { transform: translateX(5px) scale(.99); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.reply-preview.daisy-reply-preview-pop:not([hidden]) {
+  animation: daisyReplyPreviewPop .28s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes daisyReplyPreviewPop {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-row.daisy-message-enter,
+  .message-row.daisy-reply-triggered .message-bubble,
+  .reply-preview.daisy-reply-preview-pop:not([hidden]) {
+    animation: none !important;
+  }
+}
+
+
+/* Daisyshire interaction polish: swipe, heart burst and camera mode toast */
+.message-row.daisy-swipe-active .message-bubble {
+  box-shadow: 0 8px 24px rgba(198, 112, 158, .20);
+  border-color: rgba(218, 133, 177, .55);
+}
+
+.message-row.daisy-swipe-active .message-bubble::after {
+  content: "↩";
+  position: absolute;
+  left: -27px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #c56b9c;
+  font-size: 19px;
+  font-weight: 700;
+  opacity: var(--daisy-swipe-progress, 0);
+  pointer-events: none;
+}
+
+.message-bubble {
+  position: relative;
+}
+
+.daisy-heart-burst {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  top: 48%;
+  font-size: 48px;
+  line-height: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.25);
+  filter: drop-shadow(0 5px 9px rgba(220, 70, 125, .25));
+  animation: daisyHeartBurst .82s cubic-bezier(.16, 1, .3, 1) forwards;
+}
+
+@keyframes daisyHeartBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(.25) rotate(-18deg);
+  }
+  22% {
+    opacity: 1;
+    transform: translate(-50%, -55%) scale(1.25) rotate(8deg);
+  }
+  48% {
+    opacity: 1;
+    transform: translate(-50%, -75%) scale(1) rotate(-5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -145%) scale(.72) rotate(8deg);
+  }
+}
+
+.status-message.camera-mode {
+  display: block;
+  margin: 10px 16px 0;
+  padding: 10px 14px;
+  border: 1px solid #c9e8d0;
+  border-radius: 13px;
+  background: #effaf1;
+  color: #347c49;
+  font-size: 13px;
+  font-weight: 650;
+  text-align: center;
+  animation: daisyCameraToastIn .22s ease-out both;
+}
+
+@keyframes daisyCameraToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daisy-heart-burst,
+  .status-message.camera-mode {
+    animation: none !important;
+  }
+}
+
+
+/* DAISYSHIRE — SMOOTH OLDER MESSAGE LOADER */
+.daisy-older-loader {
+  position: sticky;
+  top: 5px;
+  z-index: 5;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding: 9px 15px;
+  margin: 2px auto 10px;
+  border: 1px solid rgba(233, 164, 202, .2);
+  border-radius: 30px;
+  background: rgba(38, 29, 47, .94);
+  color: #e9c6df;
+  font-size: 11px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .2);
+  animation: daisy-loader-appear .22s ease both;
+}
+
+.daisy-loader-spinner {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  border: 2px solid rgba(233, 164, 202, .22);
+  border-top-color: #efa9cf;
+  border-right-color: #bba8f2;
+  border-radius: 50%;
+  animation: daisy-loader-spin .7s linear infinite;
+}
+
+@keyframes daisy-loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes daisy-loader-appear {
+  from { opacity: 0; transform: translateY(-7px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daisy-older-loader,
+  .daisy-loader-spinner {
+    animation-duration: 1.8s;
+  }
+}
+
+
+
+/* DAISYSHIRE MEDIA DOWNLOAD BUTTON */
+.daisy-media-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  margin-top: 9px;
+  padding: 8px 14px;
+  border: 1px solid rgba(226, 166, 205, .25);
+  border-radius: 12px;
+  background: rgba(181, 112, 157, .13);
+  color: #f2c6df;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    transform .2s ease,
+    opacity .2s ease;
+}
+
+.daisy-media-download:active {
+  transform: scale(.96);
+}
+
+.daisy-media-download:disabled {
+  cursor: default;
+  opacity: .8;
+}
+
+.daisy-media-download.is-saving {
+  background: rgba(181, 112, 157, .22);
+  animation: daisy-download-pulse 1s ease-in-out infinite alternate;
+}
+
+.daisy-media-download.is-saved {
+  background: rgba(67, 150, 111, .2);
+  border-color: rgba(110, 207, 157, .4);
+  color: #a9e4c2;
+}
+
+.daisy-media-download.is-download-error {
+  background: rgba(190, 75, 100, .16);
+  border-color: rgba(240, 130, 155, .35);
+  color: #ffb4c5;
+}
+
+@keyframes daisy-download-pulse {
+  from { opacity: .65; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daisy-media-download,
+  .daisy-media-download.is-saving {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* =========================================
+   DAISYSHIRE — GLOBAL SMOOTHNESS POLISH
+   ========================================= */
+
+:root {
+  --ds-motion-fast: 160ms;
+  --ds-motion-normal: 220ms;
+  --ds-motion-smooth: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* Chats list cards */
+.daisy-conversation-item,
+.daisy-user-result {
+  transition:
+    transform var(--ds-motion-normal) var(--ds-motion-smooth),
+    background-color var(--ds-motion-normal) ease,
+    border-color var(--ds-motion-normal) ease,
+    box-shadow var(--ds-motion-normal) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .daisy-conversation-item:hover,
+  .daisy-user-result:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(80, 43, 67, .09);
+  }
+}
+
+/* Tactile press feedback */
+.daisy-conversation-item:active,
+.daisy-message-user-button:active,
+.daisy-user-search button:active,
+.daisy-chats-heading button:active,
+.daisy-media-download:active {
+  transform: scale(.975);
+}
+
+/* Consistent button motion */
+.daisy-message-user-button,
+.daisy-user-search button,
+.daisy-chats-heading button,
+.daisy-media-download {
+  transition:
+    transform var(--ds-motion-fast) var(--ds-motion-smooth),
+    filter var(--ds-motion-fast) ease,
+    box-shadow var(--ds-motion-normal) ease,
+    background-color var(--ds-motion-normal) ease,
+    border-color var(--ds-motion-normal) ease;
+}
+
+.daisy-message-user-button:active,
+.daisy-user-search button:active {
+  filter: brightness(1.08);
+}
+
+/* Keyboard accessibility */
+.daisy-conversation-item:focus-visible,
+.daisy-message-user-button:focus-visible,
+.daisy-user-search button:focus-visible,
+.daisy-chats-heading button:focus-visible,
+.daisy-media-download:focus-visible {
+  outline: 2px solid #d98db5;
+  outline-offset: 3px;
+}
+
+/* Softer media appearance */
+.chat-image,
+.chat-video {
+  animation: daisyMediaReveal .28s var(--ds-motion-smooth) both;
+}
+
+@keyframes daisyMediaReveal {
+  from {
+    opacity: 0;
+    transform: scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Reduce motion when requested by the device */
+@media (prefers-reduced-motion: reduce) {
+  .daisy-conversation-item,
+  .daisy-user-result,
+  .daisy-message-user-button,
+  .daisy-user-search button,
+  .daisy-chats-heading button,
+  .daisy-media-download,
+  .chat-image,
+  .chat-video {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* DAISYSHIRE — PREMIUM CHAT MOTION V2 */
+
+/* Smooth bubble interactions without changing swipe handling */
+.message-bubble {
+  transition:
+    box-shadow .24s cubic-bezier(.2,.8,.2,1),
+    border-color .24s ease,
+    background-color .24s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .message-bubble:hover {
+    box-shadow: 0 5px 18px rgba(190, 112, 158, .12);
+  }
+}
+
+/* Reaction refinement */
+.reaction-chip,
+.reaction-add-button {
+  will-change: transform;
+  transition:
+    transform .18s cubic-bezier(.16,1,.3,1),
+    background-color .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.reaction-chip:active,
+.reaction-add-button:active {
+  transform: scale(.90);
+}
+
+.reaction-chip.my-reaction {
+  animation: daisyReactionRefined .32s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes daisyReactionRefined {
+  0% { transform: scale(.78); }
+  55% { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}
+
+/* Floating menus */
+.message-options-menu:not([hidden]),
+.reaction-picker:not([hidden]) {
+  animation: daisyFloatingMenu .22s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes daisyFloatingMenu {
+  from {
+    opacity: 0;
+    transform: translateY(7px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Composer focus refinement */
+.message-form textarea:focus,
+.message-form input:focus {
+  transition:
+    border-color .22s ease,
+    box-shadow .22s ease,
+    background-color .22s ease;
+}
+
+/* Accessible focus */
+.message-options-menu button:focus-visible,
+.reaction-picker button:focus-visible,
+.reaction-chip:focus-visible {
+  outline: 2px solid #d98db5;
+  outline-offset: 3px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reaction-chip.my-reaction,
+  .message-options-menu:not([hidden]),
+  .reaction-picker:not([hidden]) {
+    animation: none !important;
+  }
+}
+
+
+/* DAISYSHIRE — FULL SCREEN CAMERA STUDIO */
+
+.camera-panel.daisy-camera-studio {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  padding: 12px 14px 24px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  background: #17121e !important;
+  color: #fff4fa !important;
+  border: 0 !important;
+}
+
+.daisy-camera-interface {
+  width: 100%;
+  max-width: 600px;
+  min-height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.daisy-camera-header {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.daisy-camera-header button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 50%;
+  background: #302439;
+  color: white;
+  font-size: 25px;
+}
+
+.daisy-camera-view {
+  position: relative;
+  width: 100%;
+  height: min(53vh, 490px);
+  min-height: 230px;
+  overflow: hidden;
+  border-radius: 25px;
+  background: #09070c;
+  box-shadow: 0 12px 40px rgba(0,0,0,.28);
+}
+
+.daisy-camera-view video {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+  transition: filter .25s ease;
+}
+
+.daisy-camera-filter-label {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: rgba(20,12,25,.65);
+  color: white;
+  font-size: 12px;
+  backdrop-filter: blur(12px);
+}
+
+.daisy-camera-mode {
+  justify-content: center;
+  gap: 14px;
+}
+
+.daisy-camera-mode button {
+  min-width: 105px;
+  border-radius: 25px;
+  padding: 11px 20px;
+  background: #302439;
+  color: #f7e9f2;
+}
+
+.daisy-camera-mode button.active {
+  background: #d77eaa;
+  color: white;
+}
+
+.daisy-filter-section {
+  width: 100%;
+}
+
+.daisy-filter-section > p {
+  margin: 0 0 12px;
+  color: #f4d9e9;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.daisy-filter-strip {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 2px 12px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.daisy-filter-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.daisy-filter {
+  flex: 0 0 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 15px;
+  padding: 8px 4px;
+  background: #29202f;
+  color: #f7eaf2;
+  font-size: 11px;
+}
+
+.daisy-filter.active {
+  border-color: #e8a6cb;
+  background: #483044;
+  color: white;
+}
+
+.daisy-filter-dot {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#f3d2e5,#c77da9);
+}
+
+.daisy-filter-dot.rose {
+  background: linear-gradient(135deg,#ffe0ec,#dc82ae);
+}
+
+.daisy-filter-dot.lavender {
+  background: linear-gradient(135deg,#e5d7ff,#987dcb);
+}
+
+.daisy-filter-dot.honey {
+  background: linear-gradient(135deg,#ffe3a9,#bd8547);
+}
+
+.daisy-filter-dot.cloud {
+  background: linear-gradient(135deg,#fff,#c8d6e8);
+}
+
+.daisy-filter-dot.peach {
+  background: linear-gradient(135deg,#ffdfc9,#e99482);
+}
+
+.daisy-camera-controls {
+  margin-top: auto;
+  padding: 8px 0 12px;
+}
+
+.daisy-camera-controls #captureCameraButton {
+  width: 76px;
+  height: 76px;
+  min-width: 76px;
+  border: 6px solid rgba(255,255,255,.85);
+  border-radius: 50%;
+  background: #e79bc2;
+  color: white;
+  font-size: 31px;
+  box-shadow: 0 0 0 5px rgba(231,155,194,.2);
+  transition: transform .18s ease;
+}
+
+.daisy-camera-controls #captureCameraButton:active {
+  transform: scale(.91);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daisy-camera-view video,
+  .daisy-camera-controls #captureCameraButton {
+    transition: none !important;
+  }
+}
+
+
+/* =========================================
+   DAISYSHIRE CAMERA STUDIO — CUTE MAKEOVER
+========================================= */
+
+.camera-panel.daisy-camera-studio {
+  background:
+    radial-gradient(ellipse at 15% 5%, #ffe2ee 0%, transparent 38%),
+    radial-gradient(ellipse at 90% 90%, #f9d9e8 0%, transparent 38%),
+    #fff8f5 !important;
+  color: #593d4b !important;
+  padding: max(14px, env(safe-area-inset-top))
+           16px
+           max(20px, env(safe-area-inset-bottom)) !important;
+}
+
+.daisy-camera-interface {
+  max-width: 540px;
+  gap: 18px;
+}
+
+.daisy-camera-header {
+  min-height: 54px;
+  color: #70465a;
+  font-size: 17px;
+  letter-spacing: .2px;
+}
+
+.daisy-camera-header span {
+  font-weight: 800;
+}
+
+.daisy-camera-header span::before {
+  content: "✿ ";
+  color: #dc8caf;
+}
+
+.daisy-camera-header button {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid #f3dce5;
+  color: #9a6680;
+  box-shadow: 0 5px 16px rgba(164,103,131,.10);
+  backdrop-filter: blur(14px);
+  transition: transform .2s ease, background .2s ease;
+}
+
+.daisy-camera-header button:active {
+  transform: scale(.88);
+  background: #ffe7f0;
+}
+
+.daisy-camera-view {
+  height: min(51vh, 480px);
+  min-height: 240px;
+  border: 4px solid white;
+  border-radius: 29px;
+  background: #f4e8ed;
+  box-shadow:
+    0 14px 35px rgba(139,91,113,.14),
+    0 0 0 1px #f4dce7;
+}
+
+.daisy-camera-view video {
+  transition: filter .3s ease;
+}
+
+.daisy-camera-filter-label {
+  left: 14px;
+  bottom: 14px;
+  padding: 9px 14px;
+  border: 1px solid rgba(255,255,255,.5);
+  background: rgba(75,43,61,.48);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: .2px;
+  backdrop-filter: blur(16px);
+}
+
+.daisy-camera-mode {
+  gap: 10px;
+  padding: 5px;
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: 30px;
+  background: #f5e6ec;
+}
+
+.daisy-camera-mode button {
+  min-width: 112px;
+  border: 0;
+  border-radius: 25px;
+  padding: 12px 22px;
+  background: transparent;
+  color: #986e81;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  transition: all .22s ease;
+}
+
+.daisy-camera-mode button.active {
+  background: white;
+  color: #bd6e94;
+  box-shadow: 0 4px 13px rgba(151,92,119,.13);
+  transform: translateY(-1px);
+}
+
+.daisy-filter-section > p {
+  color: #80576b;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin-bottom: 13px;
+}
+
+.daisy-filter-strip {
+  gap: 11px;
+  padding: 5px 3px 14px;
+}
+
+.daisy-filter {
+  flex: 0 0 79px;
+  min-height: 99px;
+  border: 1px solid #f2e0e8;
+  border-radius: 19px;
+  padding: 10px 5px;
+  background: rgba(255,255,255,.82);
+  color: #896779;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(143,94,117,.06);
+  transition:
+    transform .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease;
+}
+
+.daisy-filter:active {
+  transform: scale(.94);
+}
+
+.daisy-filter.active {
+  border: 2px solid #dc91b3;
+  background: #fff0f6;
+  color: #a9517b;
+  box-shadow: 0 5px 17px rgba(207,123,163,.18);
+  transform: translateY(-3px);
+}
+
+.daisy-filter-dot {
+  width: 51px;
+  height: 51px;
+  border: 3px solid white;
+  box-shadow: 0 3px 10px rgba(100,60,80,.12);
+}
+
+.daisy-filter-dot.natural {
+  background: linear-gradient(135deg,#fff0e8,#d8b5a8);
+}
+
+.daisy-filter-dot.rose {
+  background: linear-gradient(135deg,#ffe4ed,#e58bad);
+}
+
+.daisy-filter-dot.lavender {
+  background: linear-gradient(135deg,#eee3ff,#a995d9);
+}
+
+.daisy-filter-dot.honey {
+  background: linear-gradient(135deg,#fff0c9,#d9a45e);
+}
+
+.daisy-filter-dot.cloud {
+  background: linear-gradient(135deg,#fff,#d5e3ed);
+}
+
+.daisy-filter-dot.peach {
+  background: linear-gradient(135deg,#ffe7d8,#eea28c);
+}
+
+.daisy-camera-controls {
+  min-height: 94px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 16px;
+}
+
+.daisy-camera-controls #captureCameraButton {
+  width: 78px;
+  height: 78px;
+  min-width: 78px;
+  border: 5px solid white;
+  outline: 2px solid #e9a7c4;
+  outline-offset: 3px;
+  border-radius: 50%;
+  background: linear-gradient(145deg,#f6b8d0,#dc82aa);
+  color: white;
+  font-size: 0;
+  box-shadow: 0 8px 22px rgba(202,111,153,.25);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.daisy-camera-controls #captureCameraButton::before {
+  content: "";
+  display: block;
+  width: 25px;
+  height: 25px;
+  margin: auto;
+  border: 3px solid white;
+  border-radius: 50%;
+}
+
+.daisy-camera-controls #captureCameraButton:active {
+  transform: scale(.88);
+  box-shadow: 0 3px 10px rgba(202,111,153,.2);
+}
+
+/* Photo/video preview makeover */
+
+#cameraPanel:has(.camera-preview) {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  padding: max(20px, env(safe-area-inset-top)) 16px
+           max(22px, env(safe-area-inset-bottom)) !important;
+  background:
+    radial-gradient(ellipse at 10% 5%, #ffe2ee, transparent 40%),
+    #fff8f5 !important;
+  border: 0 !important;
+}
+
+#cameraPanel .camera-preview {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  color: #70465a;
+}
+
+#cameraPanel .camera-preview > p {
+  text-align: center;
+  font-size: 21px;
+  font-weight: 800;
+  color: #80516a;
+}
+
+#cameraPanel .camera-preview > p::before {
+  content: "✿ ";
+  color: #dc8caf;
+}
+
+#cameraPanel .camera-preview img,
+#cameraPanel .camera-preview video {
+  width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  border: 5px solid white;
+  border-radius: 27px;
+  background: #f5e7ed;
+  box-shadow: 0 12px 35px rgba(139,91,113,.15);
+}
+
+#cameraPanel .camera-preview .camera-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+#cameraPanel .camera-preview .camera-controls button {
+  min-height: 49px;
+  min-width: 125px;
+  padding: 12px 23px;
+  border: 1px solid #f0d9e4;
+  border-radius: 25px;
+  background: white;
+  color: #a35f7e;
+  font-weight: 800;
+  box-shadow: 0 5px 15px rgba(143,94,117,.09);
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+#cameraPanel .camera-preview #sendCameraMedia {
+  background: linear-gradient(135deg,#eaa5c3,#d77da5);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 6px 17px rgba(202,111,153,.22);
+}
+
+#cameraPanel .camera-preview button:active {
+  transform: scale(.95);
+}
+
+#cameraPanel .camera-preview button:disabled {
+  opacity: .55;
+}
+
+@media (max-width: 380px) {
+  .daisy-camera-interface {
+    gap: 13px;
+  }
+
+  .daisy-camera-view {
+    min-height: 215px;
+  }
+
+  .daisy-filter {
+    flex-basis: 72px;
+  }
+
+  .daisy-camera-mode button {
+    min-width: 100px;
+    padding: 11px 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daisy-camera-header button,
+  .daisy-camera-mode button,
+  .daisy-filter,
+  .daisy-camera-controls #captureCameraButton,
+  #cameraPanel .camera-preview button {
+    transition: none !important;
+  }
+}
+
+
+/* DAISYSHIRE — FIX CAMERA PREVIEW LAYOUT */
+
+#cameraPanel .camera-preview {
+  width: 100% !important;
+  max-width: 520px !important;
+  min-height: 100% !important;
+  margin: 0 auto !important;
+  padding: 18px 0 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 20px !important;
+  background: transparent !important;
+}
+
+#cameraPanel .camera-preview > p {
+  margin: 0 0 4px !important;
+  font-size: 21px !important;
+  text-align: center !important;
+}
+
+#cameraPanel .camera-preview > img,
+#cameraPanel .camera-preview > video {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: min(100%, 420px) !important;
+  max-height: 58dvh !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+  border: 4px solid white !important;
+  border-radius: 25px !important;
+  background: transparent !important;
+  box-shadow: 0 12px 35px rgba(139,91,113,.15) !important;
+}
+
+#cameraPanel .camera-preview .camera-controls {
+  width: 100% !important;
+  min-height: 65px !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 14px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#cameraPanel .camera-preview .camera-controls button {
+  flex: 1 1 0 !important;
+  max-width: 165px !important;
+  min-height: 52px !important;
+  border-radius: 28px !important;
+}
+
+
+/* ======================================
+   DAISYSHIRE — INSTAGRAM STYLE CAMERA
+====================================== */
+
+.camera-panel.daisy-camera-studio {
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #15131a !important;
+  color: white !important;
+}
+
+.daisy-instagram-camera {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  height: 100%;
+  min-height: 100%;
+  margin: auto;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  gap: 0;
+  background: #15131a;
+  overflow: hidden;
+}
+
+.daisy-camera-topbar {
+  position: absolute;
+  z-index: 5;
+  top: max(12px, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 17px;
+  pointer-events: none;
+}
+
+.daisy-camera-topbar button {
+  pointer-events: auto;
+  width: 43px;
+  height: 43px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 50%;
+  background: rgba(25,20,29,.38);
+  color: white;
+  font-size: 25px;
+  backdrop-filter: blur(14px);
+}
+
+.daisy-camera-view {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: #17141b;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.daisy-camera-view video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+}
+
+.daisy-camera-filter-label {
+  left: 50%;
+  bottom: 285px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.daisy-camera-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right,
+      transparent 33.1%, rgba(255,255,255,.45) 33.3%,
+      transparent 33.5%, transparent 66.4%,
+      rgba(255,255,255,.45) 66.6%, transparent 66.8%),
+    linear-gradient(to bottom,
+      transparent 33.1%, rgba(255,255,255,.45) 33.3%,
+      transparent 33.5%, transparent 66.4%,
+      rgba(255,255,255,.45) 66.6%, transparent 66.8%);
+}
+
+.daisy-camera-grid[hidden] {
+  display: none;
+}
+
+.daisy-camera-side-tools {
+  position: absolute;
+  z-index: 4;
+  left: 13px;
+  top: 36%;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+}
+
+.daisy-camera-side-tools button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 54px;
+  padding: 8px 5px;
+  border: 0;
+  border-radius: 15px;
+  background: rgba(28,23,34,.35);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  backdrop-filter: blur(12px);
+}
+
+.daisy-camera-side-tools button span {
+  font-size: 27px;
+  line-height: 1;
+}
+
+.daisy-camera-side-tools button.active {
+  background: rgba(226,139,180,.72);
+}
+
+.daisy-instagram-bottom {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 0 max(15px, env(safe-area-inset-bottom));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(20,17,25,.68) 10%,
+    rgba(20,17,25,.96) 32%
+  );
+}
+
+.daisy-instagram-bottom .daisy-filter-section {
+  padding: 0 10px;
+}
+
+.daisy-instagram-bottom .daisy-filter-section > p {
+  color: white;
+  padding-left: 5px;
+  margin-bottom: 9px;
+}
+
+.daisy-instagram-bottom .daisy-filter-strip {
+  gap: 13px;
+  padding: 4px 4px 13px;
+}
+
+.daisy-instagram-bottom .daisy-filter {
+  flex-basis: 65px;
+  min-height: 84px;
+  padding: 5px 3px;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: white;
+  box-shadow: none;
+  font-size: 10px;
+}
+
+.daisy-instagram-bottom .daisy-filter-dot {
+  width: 55px;
+  height: 55px;
+  border: 2px solid rgba(255,255,255,.8);
+}
+
+.daisy-instagram-bottom .daisy-filter.active {
+  background: rgba(255,255,255,.13);
+  border: 1px solid #f1a9ce;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.daisy-instagram-bottom .daisy-camera-mode {
+  margin: 5px auto 12px;
+  padding: 4px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.daisy-instagram-bottom .daisy-camera-mode button {
+  min-width: 100px;
+  padding: 10px 18px;
+  color: white;
+  background: transparent;
+}
+
+.daisy-instagram-bottom .daisy-camera-mode button.active {
+  color: white;
+  background: linear-gradient(135deg,#ed9fc2,#d875a5);
+  box-shadow: 0 4px 14px rgba(220,117,165,.28);
+}
+
+.daisy-instagram-capture-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  padding: 0 35px;
+}
+
+.daisy-instagram-capture-row #cameraGalleryButton,
+.daisy-instagram-capture-row .daisy-camera-bottom-spacer {
+  width: 58px;
+  height: 58px;
+}
+
+.daisy-instagram-capture-row #cameraGalleryButton {
+  justify-self: start;
+  border: 2px solid white;
+  border-radius: 13px;
+  background: rgba(255,255,255,.15);
+  color: white;
+  font-size: 31px;
+}
+
+.daisy-instagram-capture-row #captureCameraButton {
+  width: 86px;
+  height: 86px;
+  min-width: 86px;
+  border: 5px solid white;
+  outline: 2px solid #e99bc1;
+  outline-offset: 3px;
+  border-radius: 50%;
+  background: linear-gradient(145deg,#fff4fa,#f3c8df);
+  box-shadow: 0 0 0 7px rgba(235,153,194,.17);
+}
+
+.daisy-instagram-capture-row #captureCameraButton::before {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: auto;
+  border: 2px solid #d981ac;
+  border-radius: 50%;
+}
+
+.daisy-instagram-capture-row #captureCameraButton:active {
+  transform: scale(.92);
+}
+
+.daisy-instagram-capture-row #captureCameraButton.recording {
+  background: #e66c91;
+}
+
+@media (max-height: 700px) {
+  .daisy-instagram-bottom .daisy-filter {
+    min-height: 69px;
+  }
+
+  .daisy-instagram-bottom .daisy-filter-dot {
+    width: 43px;
+    height: 43px;
+  }
+
+  .daisy-instagram-capture-row #captureCameraButton {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+  }
+
+  .daisy-camera-filter-label {
+    bottom: 230px;
+  }
+}
+
+
+/* ===== CAMERA WIDTH, RECORDING TIMER & SLIDING MODE SWITCH ===== */
+
+#cameraPanel.camera-panel.daisy-camera-studio {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.daisy-instagram-camera {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.daisy-camera-view {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.daisy-camera-view video {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Live recording timer */
+.daisy-camera-recording-timer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 76px;
+  padding: 9px 15px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 24px;
+  background: rgba(20,17,25,.72);
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  letter-spacing: 1px;
+  backdrop-filter: blur(12px);
+}
+
+.daisy-camera-recording-timer:not([hidden]) {
+  display: block;
+}
+
+.daisy-camera-recording-timer:not([hidden])::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin: 0 7px 1px 0;
+  border-radius: 50%;
+  background: #ff557d;
+  animation: daisy-recording-pulse 1s infinite;
+}
+
+@keyframes daisy-recording-pulse {
+  50% { opacity: .35; }
+}
+
+/* Sliding PHOTO / VIDEO selector */
+.daisy-instagram-bottom .daisy-camera-mode {
+  position: relative;
+  display: flex;
+  width: min(290px, 78vw);
+  height: 58px;
+  margin: 5px auto 12px;
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.daisy-instagram-bottom .daisy-camera-mode .daisy-mode-slider {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ed9fc2, #d875a5);
+  box-shadow: 0 4px 14px rgba(220,117,165,.3);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+}
+
+.daisy-instagram-bottom .daisy-camera-mode.video-selected .daisy-mode-slider {
+  transform: translateX(100%);
+}
+
+.daisy-instagram-bottom .daisy-camera-mode button {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 30px;
+  background: transparent !important;
+  color: rgba(255,255,255,.8);
+  transition: color .2s ease;
+}
+
+.daisy-instagram-bottom .daisy-camera-mode button.active {
+  color: white;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Recording button changes into a stop control */
+.daisy-instagram-capture-row #captureCameraButton {
+  transition: transform .2s ease, border-radius .2s ease,
+    background .2s ease;
+}
+
+.daisy-instagram-capture-row #captureCameraButton.recording {
+  border-radius: 25px;
+  background: #ed527d;
+  animation: daisy-recording-glow 1.4s infinite;
+}
+
+.daisy-instagram-capture-row #captureCameraButton.recording::before {
+  width: 27px;
+  height: 27px;
+  border: 0;
+  border-radius: 7px;
+  background: white;
+}
+
+@keyframes daisy-recording-glow {
+  50% { box-shadow: 0 0 0 12px rgba(237,82,125,.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daisy-camera-recording-timer::before,
+  .daisy-instagram-capture-row #captureCameraButton.recording {
+    animation: none !important;
+  }
+
+  .daisy-instagram-bottom .daisy-camera-mode .daisy-mode-slider {
+    transition: none !important;
+  }
+}
+
+/* DAISYSHIRE — CAMERA STUDIO FULLSCREEN POLISH */
+
+.camera-panel.daisy-camera-studio {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  max-width: none !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.daisy-instagram-camera {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.daisy-camera-view {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #17141b !important;
+}
+
+.daisy-camera-view video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Remove the large dark panel behind the controls */
+.daisy-instagram-bottom {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  padding: 12px 0 max(18px, env(safe-area-inset-bottom)) !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Cleaner filter section */
+.daisy-instagram-bottom .daisy-filter-section {
+  padding: 0 12px !important;
+  background: transparent !important;
+}
+
+.daisy-instagram-bottom .daisy-filter-section > p {
+  color: white !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.65);
+  font-weight: 750;
+}
+
+.daisy-instagram-bottom .daisy-filter-strip {
+  background: transparent !important;
+  padding: 5px 4px 12px !important;
+}
+
+.daisy-instagram-bottom .daisy-filter {
+  background: transparent !important;
+  text-shadow: 0 2px 7px rgba(0,0,0,.8);
+}
+
+.daisy-instagram-bottom .daisy-filter.active {
+  background: rgba(255,255,255,.17) !important;
+  border: 1px solid rgba(255,255,255,.75) !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Glass-style photo/video switch */
+.daisy-instagram-bottom .daisy-camera-mode {
+  background: rgba(35,29,40,.48) !important;
+  border: 1px solid rgba(255,255,255,.3) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 5px 22px rgba(0,0,0,.16);
+}
+
+/* Gallery button */
+.daisy-instagram-capture-row #cameraGalleryButton {
+  background: rgba(35,29,40,.35) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+}
+
+/* Camera controls stay above the live preview */
+.daisy-camera-topbar,
+.daisy-camera-side-tools,
+.daisy-instagram-bottom {
+  z-index: 5 !important;
+}
+
+/* Keep camera responsive on tablets and phones */
+@media (max-width: 700px) {
+  .daisy-instagram-camera {
+    max-width: none !important;
+  }
+
+  .daisy-instagram-capture-row {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+
+/* DAISYSHIRE — CLEAN CAMERA WITHOUT FILTER CAROUSEL */
+
+/* Hide filter controls */
+.daisy-filter-section,
+#cameraFiltersShortcut,
+#cameraFilterLabel {
+  display: none !important;
+}
+
+/* Live camera orientation is controlled by cameraFacingMode in JavaScript. */
+
+/* Keep captured media previews in normal orientation */
+#cameraPanel .camera-preview img,
+#cameraPanel .camera-preview video {
+  transform: none !important;
+}
+
+/* Give the remaining controls a little breathing room */
+.daisy-instagram-bottom {
+  padding-top: 18px !important;
+}
+

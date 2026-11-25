@@ -9,6 +9,7 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "@capacitor-community/media": "^8.0.1",
     "@capacitor/android": "^7.6.10",
     "@capacitor/core": "^7.0.0",
     "@supabase/supabase-js": "^2.0.0"

@@ -26,3 +26,7 @@ backups/
 
 # Accidental terminal output file
 No environment files staged.
+
+# Local backups and temporary files
+branding/android-icon-backup-original/
+*.tmp

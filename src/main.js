@@ -1,5 +1,7 @@
 import './style.css';
 import { createClient } from '@supabase/supabase-js';
+import { Capacitor } from '@capacitor/core';
+import { Media } from '@capacitor-community/media';
 import { createDaisyshireCallController } from './video-call.js';
 import { renderDaisyGame } from './game.js';
 
@@ -14,6 +16,155 @@ if (!url || !key) {
 
 const supabase = createClient(url, key);
 const app = document.querySelector('#app');
+
+// DAISYSHIRE PHOTO AND VIDEO DOWNLOADS
+let daisyshireAlbumIdentifierPromise = null;
+
+async function getDaisyshireAlbumIdentifier() {
+  if (!daisyshireAlbumIdentifierPromise) {
+    daisyshireAlbumIdentifierPromise = (async () => {
+      const findAlbum = async () => {
+        const result = await Media.getAlbums();
+        return result.albums?.find(
+          album => album.name?.toLowerCase() === 'daisyshire'
+        );
+      };
+
+      let album = await findAlbum();
+
+      if (album?.identifier) {
+        return album.identifier;
+      }
+
+      try {
+        await Media.createAlbum({ name: 'Daisyshire' });
+      } catch (createError) {
+        // The album may have been created already.
+        album = await findAlbum();
+
+        if (album?.identifier) {
+          return album.identifier;
+        }
+
+        throw createError;
+      }
+
+      album = await findAlbum();
+
+      if (!album?.identifier) {
+        throw new Error('Could not find the Daisyshire album.');
+      }
+
+      return album.identifier;
+    })();
+  }
+
+  try {
+    return await daisyshireAlbumIdentifierPromise;
+  } catch (error) {
+    daisyshireAlbumIdentifierPromise = null;
+    throw error;
+  }
+}
+
+function createMediaDownloadButton(mediaUrl, mediaType, originalName) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'daisy-media-download';
+  button.textContent = '↓ Download';
+  button.setAttribute(
+    'aria-label',
+    `Download ${mediaType === 'image' ? 'photo' : 'video'}`
+  );
+
+  button.onclick = async event => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (button.disabled) return;
+
+    const originalLabel = '↓ Download';
+    button.disabled = true;
+    button.classList.add('is-saving');
+    button.textContent = '◌ Saving...';
+
+    try {
+      const safeBaseName = String(
+        originalName ||
+        `Daisyshire-${mediaType}-${Date.now()}`
+      )
+        .split(/[\\/]/)
+        .pop()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .slice(0, 65) || `Daisyshire-${Date.now()}`;
+
+      if (
+        Capacitor.isNativePlatform() &&
+        Capacitor.getPlatform() === 'android'
+      ) {
+        const albumIdentifier = await getDaisyshireAlbumIdentifier();
+
+        const options = {
+          path: mediaUrl,
+          albumIdentifier,
+          fileName: `${safeBaseName}_${Date.now()}`
+        };
+
+        if (mediaType === 'image') {
+          await Media.savePhoto(options);
+        } else {
+          await Media.saveVideo(options);
+        }
+      } else {
+        const response = await fetch(mediaUrl);
+
+        if (!response.ok) {
+          throw new Error('Media download failed.');
+        }
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const extensionFromName = originalName?.match(/\.[a-zA-Z0-9]+$/)?.[0];
+        const mimeExtension = blob.type.split('/')[1]?.split(';')[0];
+        const extension = extensionFromName ||
+          (mimeExtension ? `.${mimeExtension === 'jpeg' ? 'jpg' : mimeExtension}` :
+            mediaType === 'image' ? '.jpg' : '.mp4');
+
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = `${safeBaseName}${extension}`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+      }
+
+      button.textContent = '✓ Saved';
+      button.classList.remove('is-saving');
+      button.classList.add('is-saved');
+
+      setTimeout(() => {
+        button.textContent = originalLabel;
+        button.classList.remove('is-saved');
+        button.disabled = false;
+      }, 1800);
+
+    } catch (error) {
+      console.error('Daisyshire media download failed:', error);
+
+      button.textContent = '↻ Try again';
+      button.classList.remove('is-saving');
+      button.classList.add('is-download-error');
+      button.disabled = false;
+    }
+  };
+
+  return button;
+}
+
 
 // DAISYSHIRE ANDROID CHROME KEYBOARD ADAPTATION
 function updateDaisyChatViewport() {
@@ -102,7 +253,7 @@ let messageReceiptCache = new Map();
 let oldestLoadedMessage = null;
 let hasMoreMessages = true;
 let loadingOlderMessages = false;
-const MESSAGE_PAGE_SIZE = 30;
+const MESSAGE_PAGE_SIZE = 40;
 let receiptVisibilityHandlerAttached = false;
 
 function updateMessageReceiptUI(messageId, receipt) {
@@ -456,6 +607,7 @@ async function togglePinnedMessage(message) {
 
 
 function showStatus(text, type = 'error', duration = 0) {
+  if (type === 'success') return;
   const element = document.querySelector('#statusMessage');
   if (!element) return;
 
@@ -590,7 +742,7 @@ async function handleAuth(event) {
       if (error) throw error;
 
       if (data.session) {
-        await renderChat(data.user);
+        await renderChatsPage(data.user);
       } else {
         currentScreen = 'login';
         renderAuth('Account created! Verify your email, then log in.');
@@ -606,7 +758,7 @@ async function handleAuth(event) {
         });
 
         if (error) throw error;
-        await renderChat(data.user);
+        await renderChatsPage(data.user);
       } else {
         const { data, error } = await supabase.functions.invoke(
           'username-login',
@@ -631,7 +783,7 @@ async function handleAuth(event) {
           });
 
         if (sessionError) throw sessionError;
-        await renderChat(sessionData.user);
+        await renderChatsPage(sessionData.user);
       }
     }
   } catch (error) {
@@ -678,6 +830,9 @@ function setReplyTarget(message) {
 
   text.textContent = messagePreviewText(message);
   preview.hidden = false;
+  preview.classList.remove('daisy-reply-preview-pop');
+  void preview.offsetWidth;
+  preview.classList.add('daisy-reply-preview-pop');
   document.querySelector('#messageInput')?.focus();
 }
 
@@ -1119,6 +1274,7 @@ async function appendMessage(message, options = {}) {
   const item = document.createElement('div');
 
   item.className = `message-row ${mine ? 'mine' : 'theirs'}`;
+  if (!options.prepend) item.classList.add('daisy-message-enter');
   item.dataset.messageId = message.id;
   item.dataset.createdAt = message.created_at || '';
 
@@ -1128,7 +1284,11 @@ async function appendMessage(message, options = {}) {
   // Add the row immediately to prevent duplicate realtime messages.
   item.appendChild(bubble);
   if (options.prepend) {
-    list.insertBefore(item, list.firstChild);
+    const loader = list.querySelector('.daisy-older-loader');
+    list.insertBefore(
+      item,
+      loader ? loader.nextSibling : list.firstChild
+    );
   } else {
     list.appendChild(item);
   }
@@ -1143,6 +1303,15 @@ async function appendMessage(message, options = {}) {
   const isInteractiveTarget = target =>
     target.closest('button, a, input, video, audio');
 
+  const playHeartBurst = () => {
+    const heart = document.createElement('span');
+    heart.className = 'daisy-heart-burst';
+    heart.textContent = '❤️';
+    heart.setAttribute('aria-hidden', 'true');
+    bubble.appendChild(heart);
+    setTimeout(() => heart.remove(), 900);
+  };
+
   bubble.addEventListener('pointerdown', event => {
     if (event.pointerType !== 'touch') return;
 
@@ -1150,6 +1319,19 @@ async function appendMessage(message, options = {}) {
     touchStartY = event.clientY;
     touchStartTime = Date.now();
     touchStartedOnInteractive = isInteractiveTarget(event.target);
+  });
+
+  bubble.addEventListener('pointermove', event => {
+    if (event.pointerType !== 'touch' || !touchStartTime || touchStartedOnInteractive) return;
+
+    const deltaX = event.clientX - touchStartX;
+    const deltaY = event.clientY - touchStartY;
+
+    if (deltaX > 8 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15) {
+      const progress = Math.min(deltaX / 85, 1);
+      item.classList.add('daisy-swipe-active');
+      item.style.setProperty('--daisy-swipe-progress', progress.toFixed(2));
+    }
   });
 
   bubble.addEventListener('pointerup', event => {
@@ -1165,14 +1347,20 @@ async function appendMessage(message, options = {}) {
     const duration = Date.now() - touchStartTime;
 
     touchStartTime = 0;
+    item.classList.remove('daisy-swipe-active');
+    item.style.removeProperty('--daisy-swipe-progress');
 
     if (
-      deltaX >= 65 &&
-      Math.abs(deltaX) > Math.abs(deltaY) * 1.3 &&
-      duration < 700
+      deltaX >= 52 &&
+      Math.abs(deltaX) > Math.abs(deltaY) * 1.15 &&
+      duration < 850
     ) {
       lastTouchTap = 0;
       lastTouchDoubleTap = 0;
+      item.classList.remove('daisy-reply-triggered');
+      void item.offsetWidth;
+      item.classList.add('daisy-reply-triggered');
+      setTimeout(() => item.classList.remove('daisy-reply-triggered'), 350);
       setReplyTarget(message);
       return;
     }
@@ -1187,6 +1375,7 @@ async function appendMessage(message, options = {}) {
     if (now - lastTouchTap < 350) {
       lastTouchTap = 0;
       lastTouchDoubleTap = now;
+      playHeartBurst();
       toggleHeartReaction(message.id);
     } else {
       lastTouchTap = now;
@@ -1196,12 +1385,15 @@ async function appendMessage(message, options = {}) {
   bubble.addEventListener('pointercancel', () => {
     touchStartTime = 0;
     lastTouchTap = 0;
+    item.classList.remove('daisy-swipe-active');
+    item.style.removeProperty('--daisy-swipe-progress');
   });
 
   bubble.addEventListener('dblclick', event => {
     if (isInteractiveTarget(event.target)) return;
     if (Date.now() - lastTouchDoubleTap < 500) return;
 
+    playHeartBurst();
     toggleHeartReaction(message.id);
   });
 
@@ -1253,6 +1445,14 @@ async function appendMessage(message, options = {}) {
         image.replaceWith(document.createTextNode('Image could not load.'));
       };
       bubble.appendChild(image);
+
+      bubble.appendChild(
+        createMediaDownloadButton(
+          data.signedUrl,
+          'image',
+          message.media_name
+        )
+      );
     } else if (message.message_type === 'video') {
       const video = document.createElement('video');
       video.src = data.signedUrl;
@@ -1271,6 +1471,14 @@ async function appendMessage(message, options = {}) {
         'video'
       );
       bubble.appendChild(openVideoButton);
+
+      bubble.appendChild(
+        createMediaDownloadButton(
+          data.signedUrl,
+          'video',
+          message.media_name
+        )
+      );
     } else {
       const audio = document.createElement('audio');
       audio.src = data.signedUrl;
@@ -1522,6 +1730,14 @@ async function loadOlderMessages() {
   const previousHeight = list.scrollHeight;
   const previousTop = list.scrollTop;
 
+  const loader = document.createElement('div');
+  loader.className = 'daisy-older-loader';
+  loader.innerHTML = `
+    <span class="daisy-loader-spinner"></span>
+    <span>Loading older messages</span>
+  `;
+  list.prepend(loader);
+
   try {
     const cursor = oldestLoadedMessage;
 
@@ -1567,10 +1783,16 @@ async function loadOlderMessages() {
       }
     }
 
-    // Results are newest-to-oldest; prepend in that order.
-    for (const message of visible) {
-      await appendMessage(message, { prepend: true });
-    }
+    // Render all 40 messages concurrently.
+    // Each message keeps its own replies, media, reactions and receipts.
+    await Promise.all(
+      visible.map(message =>
+        appendMessage(message, { prepend: true })
+      )
+    );
+
+    // Remove loader before measuring the final message height.
+    loader.remove();
 
     // Preserve the reader's exact viewport after insertion.
     list.scrollTop =
@@ -1580,6 +1802,7 @@ async function loadOlderMessages() {
     console.error('Could not load older messages:', error);
     showStatus('Could not load older messages. Please try again.');
   } finally {
+    loader.remove();
     loadingOlderMessages = false;
   }
 }
@@ -2000,8 +2223,62 @@ let cameraChunks = [];
 let cameraMode = 'photo';
 let cameraPreviewUrl = null;
 let cameraFacingMode = 'environment';
+let cameraFilter = 'none';
+let cameraRecordingTimerInterval = null;
+let cameraRecordingStartedAt = 0;
+
+function updateDaisyCameraTimer() {
+  const timer = document.querySelector('#cameraRecordingTimer');
+  if (!timer || !cameraRecordingStartedAt) return;
+
+  const seconds = Math.floor((Date.now() - cameraRecordingStartedAt) / 1000);
+  const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const remainder = String(seconds % 60).padStart(2, '0');
+  timer.textContent = minutes + ':' + remainder;
+}
+
+function startDaisyCameraTimer() {
+  stopDaisyCameraTimer();
+
+  cameraRecordingStartedAt = Date.now();
+  const timer = document.querySelector('#cameraRecordingTimer');
+
+  if (timer) {
+    timer.hidden = false;
+    timer.textContent = '00:00';
+  }
+
+  updateDaisyCameraTimer();
+  cameraRecordingTimerInterval = setInterval(updateDaisyCameraTimer, 250);
+}
+
+function stopDaisyCameraTimer() {
+  if (cameraRecordingTimerInterval) {
+    clearInterval(cameraRecordingTimerInterval);
+    cameraRecordingTimerInterval = null;
+  }
+
+  cameraRecordingStartedAt = 0;
+
+  const timer = document.querySelector('#cameraRecordingTimer');
+  if (timer) {
+    timer.hidden = true;
+    timer.textContent = '00:00';
+  }
+}
+
+const DAISY_CAMERA_FILTERS = {
+  natural: 'none',
+  rose: 'saturate(1.18) sepia(.12) hue-rotate(320deg) brightness(1.05)',
+  lavender: 'saturate(1.12) hue-rotate(15deg) brightness(1.06)',
+  honey: 'sepia(.28) saturate(1.2) contrast(1.04)',
+  cloud: 'brightness(1.12) saturate(.82) contrast(.94)',
+  peach: 'sepia(.18) saturate(1.2) hue-rotate(338deg)'
+};
 
 function closeDaisyshireCamera() {
+  stopDaisyCameraTimer();
+
   if (cameraRecorder && cameraRecorder.state !== 'inactive') {
     cameraRecorder.stop();
   }
@@ -2014,6 +2291,7 @@ function closeDaisyshireCamera() {
   const panel = document.querySelector('#cameraPanel');
   if (panel) {
     panel.hidden = true;
+    panel.classList.remove('daisy-camera-studio');
     panel.innerHTML = '';
   }
 }
@@ -2037,43 +2315,182 @@ async function openDaisyshireCamera() {
       }
     });
 
+    cameraFilter = 'none';
+    panel.classList.add('daisy-camera-studio');
     panel.hidden = false;
     panel.innerHTML = `
-      <div class="camera-interface">
-        <video id="cameraLivePreview" autoplay muted playsinline></video>
-        <div class="camera-mode">
-          <button type="button" id="photoModeButton">PHOTO</button>
-          <button type="button" id="videoModeButton">VIDEO</button>
+      <div class="camera-interface daisy-camera-interface daisy-instagram-camera">
+
+        <div class="daisy-camera-topbar">
+          <button type="button" id="closeCameraButton" aria-label="Close camera">×</button>
+          <button type="button" id="flashCameraButton" aria-label="Toggle flash">ϟ</button>
+          <div id="cameraRecordingTimer" class="daisy-camera-recording-timer" hidden>00:00</div>
+          <button type="button" id="flipCameraButton" aria-label="Flip camera">⟳</button>
         </div>
-        <div class="camera-controls">
-          <button type="button" id="flipCameraButton">Flip Camera ↻</button>
-          <button type="button" id="captureCameraButton">Capture</button>
-          <button type="button" id="closeCameraButton">Close</button>
+
+        <div class="daisy-camera-view">
+          <video id="cameraLivePreview" autoplay muted playsinline></video>
+          <div class="daisy-camera-grid" id="cameraGridOverlay" hidden></div>
+          <span class="daisy-camera-filter-label" id="cameraFilterLabel">Natural</span>
+        </div>
+
+        <div class="daisy-camera-side-tools">
+          <button type="button" id="cameraFiltersShortcut">
+            <span>✧</span> Filters
+          </button>
+          <button type="button" id="cameraGridButton">
+            <span>▦</span> Grid
+          </button>
+        </div>
+
+        <div class="daisy-instagram-bottom">
+
+          <div class="daisy-filter-section">
+            <p>✨ Choose your vibe</p>
+            <div class="daisy-filter-strip">
+              <button type="button" class="daisy-filter active" data-camera-filter="natural">
+                <span class="daisy-filter-dot natural"></span>Natural
+              </button>
+              <button type="button" class="daisy-filter" data-camera-filter="rose">
+                <span class="daisy-filter-dot rose"></span>Rose Glow
+              </button>
+              <button type="button" class="daisy-filter" data-camera-filter="lavender">
+                <span class="daisy-filter-dot lavender"></span>Lavender
+              </button>
+              <button type="button" class="daisy-filter" data-camera-filter="honey">
+                <span class="daisy-filter-dot honey"></span>Honey Film
+              </button>
+              <button type="button" class="daisy-filter" data-camera-filter="cloud">
+                <span class="daisy-filter-dot cloud"></span>Cloud Soft
+              </button>
+              <button type="button" class="daisy-filter" data-camera-filter="peach">
+                <span class="daisy-filter-dot peach"></span>Peach Bloom
+              </button>
+            </div>
+          </div>
+
+          <div class="daisy-camera-mode">
+            <span class="daisy-mode-slider"></span>
+            <button type="button" id="photoModeButton" class="active">PHOTO</button>
+            <button type="button" id="videoModeButton">VIDEO</button>
+          </div>
+
+          <div class="daisy-instagram-capture-row">
+            <button type="button" id="cameraGalleryButton" aria-label="Choose from gallery">▧</button>
+            <button type="button" id="captureCameraButton" aria-label="Capture"></button>
+            <span class="daisy-camera-bottom-spacer"></span>
+          </div>
+
         </div>
       </div>
     `;
 
     const live = document.querySelector('#cameraLivePreview');
     live.srcObject = cameraStream;
+    live.style.setProperty(
+      'transform',
+      cameraFacingMode === 'user' ? 'scaleX(-1)' : 'none',
+      'important'
+    );
+    await live.play();
 
-    document.querySelector('#photoModeButton').onclick = () => {
+    const filterButtons = panel.querySelectorAll('[data-camera-filter]');
+    filterButtons.forEach(button => {
+      button.onclick = () => {
+        cameraFilter = button.dataset.cameraFilter;
+        live.style.filter = DAISY_CAMERA_FILTERS[cameraFilter] || 'none';
+
+        filterButtons.forEach(item =>
+          item.classList.toggle('active', item === button)
+        );
+
+        const label = document.querySelector('#cameraFilterLabel');
+        if (label) label.textContent = button.textContent.trim();
+      };
+    });
+
+    const photoButton = document.querySelector('#photoModeButton');
+    const videoButton = document.querySelector('#videoModeButton');
+
+    photoButton.onclick = () => {
+      if (cameraRecorder?.state === 'recording') return;
+
       cameraMode = 'photo';
-      showStatus('Photo mode selected.', 'success');
+      photoButton.classList.add('active');
+      videoButton.classList.remove('active');
+      document.querySelector('.daisy-camera-mode')
+        ?.classList.remove('video-selected');
+
+      const capture = document.querySelector('#captureCameraButton');
+      if (capture) {
+        capture.classList.remove('recording');
+        capture.setAttribute('aria-label', 'Take photo');
+      }
     };
 
-    document.querySelector('#videoModeButton').onclick = () => {
+    videoButton.onclick = () => {
+      if (cameraRecorder?.state === 'recording') return;
+
       cameraMode = 'video';
-      showStatus('Video mode selected.', 'success');
+      videoButton.classList.add('active');
+      photoButton.classList.remove('active');
+      document.querySelector('.daisy-camera-mode')
+        ?.classList.add('video-selected');
+
+      const capture = document.querySelector('#captureCameraButton');
+      if (capture) capture.setAttribute('aria-label', 'Start video recording');
     };
 
     document.querySelector('#flipCameraButton').onclick =
       switchDaisyshireCamera;
 
+    document.querySelector('#closeCameraButton').onclick =
+      closeDaisyshireCamera;
+
     document.querySelector('#captureCameraButton').onclick =
       captureDaisyshireMedia;
 
-    document.querySelector('#closeCameraButton').onclick =
-      closeDaisyshireCamera;
+    let flashEnabled = false;
+    document.querySelector('#flashCameraButton').onclick = async event => {
+      const track = cameraStream?.getVideoTracks()[0];
+      const capabilities = track?.getCapabilities?.();
+
+      if (!capabilities?.torch) {
+        showStatus('Flash is not supported by this camera.');
+        return;
+      }
+
+      try {
+        flashEnabled = !flashEnabled;
+        await track.applyConstraints({
+          advanced: [{ torch: flashEnabled }]
+        });
+        event.currentTarget.classList.toggle('active', flashEnabled);
+      } catch (error) {
+        flashEnabled = false;
+        showStatus('Could not change flash setting.');
+      }
+    };
+
+    document.querySelector('#cameraGridButton').onclick = () => {
+      const grid = document.querySelector('#cameraGridOverlay');
+      if (grid) {
+        grid.hidden = !grid.hidden;
+        document.querySelector('#cameraGridButton')
+          .classList.toggle('active', !grid.hidden);
+      }
+    };
+
+    document.querySelector('#cameraFiltersShortcut').onclick = () => {
+      document.querySelector('.daisy-filter-section')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+
+    document.querySelector('#cameraGalleryButton').onclick = () => {
+      closeDaisyshireCamera();
+      document.querySelector('#mediaInput')?.click();
+    };
+
 
   } catch (error) {
     closeDaisyshireCamera();
@@ -2116,6 +2533,11 @@ async function switchDaisyshireCamera() {
     const live = document.querySelector('#cameraLivePreview');
     if (live) {
       live.srcObject = cameraStream;
+      live.style.setProperty(
+        'transform',
+        cameraFacingMode === 'user' ? 'scaleX(-1)' : 'none',
+        'important'
+      );
       await live.play();
     }
 
@@ -2147,7 +2569,10 @@ async function captureDaisyshireMedia() {
       return;
     }
 
-    canvas.getContext('2d').drawImage(live, 0, 0);
+    const context = canvas.getContext('2d');
+    context.filter = DAISY_CAMERA_FILTERS[cameraFilter] || 'none';
+    context.drawImage(live, 0, 0);
+    context.filter = 'none';
 
     canvas.toBlob(blob => {
       if (!blob) {
@@ -2191,6 +2616,8 @@ async function captureDaisyshireMedia() {
   };
 
   cameraRecorder.onstop = () => {
+    stopDaisyCameraTimer();
+
     const mime = cameraRecorder.mimeType.split(';')[0];
     const extension = mime === 'video/mp4' ? 'mp4' : 'webm';
     const blob = new Blob(cameraChunks, { type: mime });
@@ -2209,10 +2636,15 @@ async function captureDaisyshireMedia() {
 
   cameraRecorder.start();
 
-  document.querySelector('#captureCameraButton').textContent =
-    'Stop recording';
+  const captureButton = document.querySelector('#captureCameraButton');
+  if (captureButton) {
+    captureButton.classList.add('recording');
+    captureButton.setAttribute('aria-label', 'Stop video recording');
+  }
 
-  document.querySelector('#captureCameraButton').onclick = () => {
+  startDaisyCameraTimer();
+
+  captureButton.onclick = () => {
     if (cameraRecorder?.state === 'recording') {
       cameraRecorder.stop();
     }
@@ -2446,6 +2878,102 @@ async function stopDaisyshireTypingChannel() {
     typingChannel = null;
   }
 }
+
+async function searchDaisyshireUsers() {
+  const input = document.querySelector('#daisyUserSearchInput');
+  const results = document.querySelector('#daisyUserSearchResults');
+  const button = document.querySelector('#daisyUserSearchButton');
+
+  if (!input || !results || !button) return;
+
+  const query = input.value.trim();
+
+  results.replaceChildren();
+
+  if (query.length < 2) {
+    results.textContent = 'Enter at least 2 characters to search. 🌷';
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Searching...';
+
+  const loading = document.createElement('p');
+  loading.textContent = 'Finding Daisyshire users...';
+  results.appendChild(loading);
+
+  try {
+    const { data, error } = await supabase.rpc(
+      'search_daisyshire_users',
+      { p_query: query }
+    );
+
+    if (error) throw error;
+
+    results.replaceChildren();
+
+    if (!data?.length) {
+      results.textContent = 'No users found. Try another username. ♡';
+      return;
+    }
+
+    for (const user of data) {
+      const card = document.createElement('div');
+      card.className = 'daisy-user-result';
+
+      const details = document.createElement('div');
+      details.className = 'daisy-user-result-details';
+
+      const name = document.createElement('strong');
+      name.textContent = user.display_name || 'Daisyshire User';
+
+      const username = document.createElement('span');
+      username.textContent = '@' + user.username;
+
+      details.append(name, username);
+
+      const messageButton = document.createElement('button');
+      messageButton.type = 'button';
+      messageButton.className = 'daisy-message-user-button';
+      messageButton.textContent = 'Message';
+
+      messageButton.addEventListener('click', async () => {
+        messageButton.disabled = true;
+        messageButton.textContent = 'Opening...';
+
+        try {
+          const { data: newConversationId, error } = await supabase.rpc(
+            'start_daisyshire_conversation',
+            { p_other_user_id: user.user_id }
+          );
+
+          if (error) throw error;
+          if (!newConversationId) {
+            throw new Error('No conversation ID was returned.');
+          }
+
+          await renderChat(currentUser, newConversationId);
+        } catch (error) {
+          console.error('Could not open conversation:', error);
+          messageButton.disabled = false;
+          messageButton.textContent = 'Message';
+          alert('Could not open this chat. Please try again.');
+        }
+      });
+
+      card.append(details, messageButton);
+      results.appendChild(card);
+    }
+  } catch (error) {
+    console.error('Daisyshire user search failed:', error);
+    results.replaceChildren();
+    results.textContent = 'Search failed. Please try again.';
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Search';
+  }
+}
+
 
 async function loadDaisyshireProfile(userId) {
   const { data, error } = await supabase
@@ -2777,7 +3305,246 @@ async function saveDaisyshireProfile(event) {
   }
 }
 
-async function renderChat(user) {
+async function renderChatsPage(user = currentUser) {
+  if (!user) return;
+
+  currentUser = user;
+  currentScreen = 'chats';
+
+  if (videoCallController) {
+    await videoCallController.destroy();
+    videoCallController = null;
+  }
+
+  await stopDaisyshireTypingChannel();
+
+  if (profileChannel) {
+    await supabase.removeChannel(profileChannel);
+    profileChannel = null;
+  }
+
+  if (presenceChannel) {
+    await supabase.removeChannel(presenceChannel);
+    presenceChannel = null;
+  }
+
+  if (chatChannel) {
+    await supabase.removeChannel(chatChannel);
+    chatChannel = null;
+  }
+
+  conversationId = null;
+  otherProfile = null;
+
+  app.innerHTML = `
+    <main class="chat-page">
+      <section class="chat-card daisy-chats-screen">
+        <header class="daisy-chats-page-header">
+          <div>
+            <h1>Chats ♡</h1>
+            <p>Your little conversations in Daisyshire</p>
+          </div>
+          <button type="button" id="chatsLogoutButton"
+            class="logout-btn">Log out</button>
+        </header>
+
+        <div class="daisy-user-search">
+          <input id="daisyUserSearchInput"
+            type="search"
+            maxlength="20"
+            placeholder="Search people by username...">
+          <button type="button" id="daisyUserSearchButton">
+            Search
+          </button>
+        </div>
+
+        <div id="daisyUserSearchResults"
+          class="daisy-user-search-results"></div>
+
+        <h3 class="daisy-conversations-title">
+          Your conversations
+        </h3>
+
+        <div id="daisyConversationList"
+          class="daisy-conversation-list">
+          <p>Loading your conversations... 🌷</p>
+        </div>
+      </section>
+    </main>
+  `;
+
+  document.querySelector('#chatsLogoutButton').onclick =
+    async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) alert(error.message);
+    };
+
+  const searchInput =
+    document.querySelector('#daisyUserSearchInput');
+
+  searchInput.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document.querySelector('#daisyUserSearchButton').click();
+    }
+  });
+
+  document.querySelector('#daisyUserSearchButton').onclick =
+    searchDaisyshireUsers;
+
+  const list = document.querySelector('#daisyConversationList');
+
+  try {
+    const { data: ownMemberships, error: ownError } =
+      await supabase
+        .from('conversation_members')
+        .select('conversation_id')
+        .eq('user_id', user.id);
+
+    if (ownError) throw ownError;
+
+    const conversationIds = [
+      ...new Set((ownMemberships || [])
+        .map(row => row.conversation_id))
+    ];
+
+    if (!conversationIds.length) {
+      list.textContent =
+        'No conversations yet. Search for someone to say hello! 🌷';
+      return;
+    }
+
+    const { data: members, error: membersError } =
+      await supabase
+        .from('conversation_members')
+        .select('conversation_id, user_id')
+        .in('conversation_id', conversationIds);
+
+    if (membersError) throw membersError;
+
+    const otherUsers = (members || []).filter(
+      member => member.user_id !== user.id
+    );
+
+    const otherUserIds = [
+      ...new Set(otherUsers.map(member => member.user_id))
+    ];
+
+    if (!otherUserIds.length) {
+      list.textContent =
+        'No other conversations yet. Search for someone! 🌷';
+      return;
+    }
+
+    const { data: profiles, error: profilesError } =
+      await supabase
+        .from('profiles')
+        .select('id, display_name, username, avatar_path')
+        .in('id', otherUserIds);
+
+    if (profilesError) throw profilesError;
+
+    const profileMap = new Map(
+      (profiles || []).map(profile => [profile.id, profile])
+    );
+
+    const { data: messages, error: messagesError } =
+      await supabase
+        .from('messages')
+        .select('conversation_id, sender_id, body, message_type, created_at')
+        .in('conversation_id', conversationIds)
+        .order('created_at', { ascending: false })
+        .limit(500);
+
+    if (messagesError) throw messagesError;
+
+    const latestMessages = new Map();
+
+    for (const message of messages || []) {
+      if (!latestMessages.has(message.conversation_id)) {
+        latestMessages.set(message.conversation_id, message);
+      }
+    }
+
+    const items = otherUsers
+      .filter(member => profileMap.has(member.user_id))
+      .map(member => ({
+        conversationId: member.conversation_id,
+        profile: profileMap.get(member.user_id),
+        latest: latestMessages.get(member.conversation_id)
+      }));
+
+    items.sort((a, b) =>
+      new Date(b.latest?.created_at || 0) -
+      new Date(a.latest?.created_at || 0)
+    );
+
+    list.replaceChildren();
+
+    if (!items.length) {
+      list.textContent =
+        'No conversations yet. Search for someone! 🌷';
+      return;
+    }
+
+    for (const item of items) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'daisy-conversation-item';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'daisy-conversation-avatar';
+      avatar.textContent = '♡';
+
+      if (item.profile.avatar_path) {
+        const url = await getDaisyshireAvatar(
+          item.profile.avatar_path
+        );
+
+        if (url) {
+          const image = document.createElement('img');
+          image.src = url;
+          image.alt = '';
+          avatar.replaceChildren(image);
+        }
+      }
+
+      const details = document.createElement('div');
+      details.className = 'daisy-conversation-details';
+
+      const name = document.createElement('strong');
+      name.textContent =
+        item.profile.display_name || 'Daisyshire User';
+
+      const preview = document.createElement('span');
+      preview.textContent = item.latest
+        ? messagePreviewText(item.latest)
+        : 'Start your conversation ♡';
+
+      details.append(name, preview);
+
+      const time = document.createElement('span');
+      time.className = 'daisy-conversation-time';
+      time.textContent = item.latest
+        ? formatTime(item.latest.created_at)
+        : '';
+
+      button.append(avatar, details, time);
+
+      button.onclick = () =>
+        renderChat(user, item.conversationId);
+
+      list.appendChild(button);
+    }
+  } catch (error) {
+    console.error('Chats page loading failed:', error);
+    list.textContent =
+      'Could not load conversations. Please try again.';
+  }
+}
+
+
+async function renderChat(user, selectedConversationId = null) {
   if (videoCallController) {
     await videoCallController.destroy();
     videoCallController = null;
@@ -2796,7 +3563,18 @@ async function renderChat(user) {
     chatChannel = null;
   }
 
+  if (presenceChannel) {
+    await supabase.removeChannel(presenceChannel);
+    presenceChannel = null;
+  }
+
   conversationId = null;
+  replyingToMessage = null;
+  hiddenMessageIds = new Set();
+  messageReceiptCache = new Map();
+  oldestLoadedMessage = null;
+  hasMoreMessages = true;
+  loadingOlderMessages = false;
 
   app.innerHTML = `
     <main class="chat-page">
@@ -2812,6 +3590,10 @@ async function renderChat(user) {
             </div>
           </button>
           <div class="chat-header-actions">
+            <button type="button" id="openChatsButton"
+              class="profile-open-button">
+              Chats
+            </button>
             <button type="button" id="startVideoCallButton"
               class="daisy-video-call-button"
               aria-label="Start video call" title="Start video call">📹</button>
@@ -2821,6 +3603,32 @@ async function renderChat(user) {
             <button id="logoutButton" class="logout-btn">Log out</button>
           </div>
         </div>
+
+        <section id="daisyChatsPanel" class="daisy-chats-panel" hidden>
+          <div class="daisy-chats-heading">
+            <h3>Your conversations ♡</h3>
+            <button type="button" id="closeChatsButton"
+              aria-label="Close chats">×</button>
+          </div>
+
+          <div class="daisy-user-search">
+            <input id="daisyUserSearchInput"
+              type="search"
+              maxlength="20"
+              placeholder="Search by username...">
+            <button type="button" id="daisyUserSearchButton">
+              Search
+            </button>
+          </div>
+
+          <div id="daisyUserSearchResults"
+            class="daisy-user-search-results"></div>
+
+          <div id="daisyConversationList"
+            class="daisy-conversation-list">
+            <p>Loading your conversations... 🌷</p>
+          </div>
+        </section>
 
         <div id="typingIndicator" class="typing-indicator" hidden>
           <span class="typing-dots"><i></i><i></i><i></i></span>
@@ -2955,6 +3763,28 @@ async function renderChat(user) {
     </main>
   `;
 
+  document.querySelector('#openChatsButton').onclick = () => {
+    renderChatsPage(currentUser);
+  };
+
+  document.querySelector('#closeChatsButton').onclick = () => {
+    const panel = document.querySelector('#daisyChatsPanel');
+    if (panel) panel.hidden = true;
+  };
+
+  document.querySelector('#daisyUserSearchInput').addEventListener(
+    'keydown',
+    event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        document.querySelector('#daisyUserSearchButton').click();
+      }
+    }
+  );
+
+  document.querySelector('#daisyUserSearchButton').onclick =
+    searchDaisyshireUsers;
+
   document.querySelector('#openProfileButton').onclick =
     openDaisyshireProfile;
 
@@ -3000,6 +3830,17 @@ async function renderChat(user) {
   document.querySelector('#messageForm').onsubmit = sendMessage;
 
   const typingInput = document.querySelector('#messageInput');
+  typingInput.addEventListener('keydown', event => {
+    if (
+      event.key !== 'Enter' ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.keyCode === 229
+    ) return;
+
+    event.preventDefault();
+    document.querySelector('#messageForm')?.requestSubmit();
+  });
   typingInput.addEventListener('input', handleDaisyshireTyping);
   typingInput.addEventListener('blur', stopDaisyshireTyping);
 
@@ -3021,15 +3862,31 @@ async function renderChat(user) {
   };
 
   try {
-    const { data: conversation, error } = await supabase
-      .from('conversations')
-      .select('id')
-      .eq('pair_key', 'daisyshire-main')
-      .single();
+    if (selectedConversationId) {
+      const { data: membership, error: membershipError } = await supabase
+        .from('conversation_members')
+        .select('conversation_id')
+        .eq('conversation_id', selectedConversationId)
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-    if (error) throw error;
+      if (membershipError) throw membershipError;
+      if (!membership) {
+        throw new Error('You are not a member of this conversation.');
+      }
 
-    conversationId = conversation.id;
+      conversationId = selectedConversationId;
+    } else {
+      const { data: conversation, error } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('pair_key', 'daisyshire-main')
+        .single();
+
+      if (error) throw error;
+
+      conversationId = conversation.id;
+    }
 
     chatChannel = supabase
       .channel('daisyshire-messages')
@@ -3179,7 +4036,7 @@ function showDaisyshireGame() {
       if (error) {
         renderAuth('Could not check your session. Please try again.');
       } else if (data.session) {
-        await renderChat(data.session.user);
+        await renderChatsPage(data.session.user);
       } else {
         currentScreen = 'login';
         renderAuth();
